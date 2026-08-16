@@ -28,14 +28,14 @@ global.window = global;
 
   assert.equal(action.dialogue, "Filha, vamos levantar com calma; ainda temos tempo.");
   assert.equal(reaction.text, "Eu ouvi. Já vou me arrumar.");
-  assert.equal(action.narrativeSource, "OPENAI");
-  assert.equal(reaction.narrativeSource, "OPENAI");
+  assert.equal(action.narrativeSource, "OLLAMA");
+  assert.equal(reaction.narrativeSource, "OLLAMA");
   assert.equal(receivedTurn.action.id, action.chosenAction);
   assert.equal(receivedTurn.reaction.required, true);
   assert.ok(!JSON.stringify(receivedTurn.action).includes("Filha, acorde"), "o template local não deve ser enviado como resposta a copiar");
   assert.equal(world.state.history.find((entry) => entry.id === action.id).dialogue, action.dialogue, "o texto gerado deve permanecer no histórico");
 
-  console.log(JSON.stringify({ result: "ok", provider: "OPENAI", reaction: true }, null, 2));
+  console.log(JSON.stringify({ result: "ok", provider: "OLLAMA", reaction: true }, null, 2));
 })().catch((error) => {
   console.error(error);
   process.exitCode = 1;

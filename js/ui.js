@@ -107,7 +107,7 @@
       article.innerHTML = `
         <div class="avatar" aria-hidden="true">${this.escape(character.initials)}</div>
         <div class="dialogue-body">
-          <div class="speaker-line"><strong>${this.escape(character.name.toUpperCase())}</strong><span>${entry.type} · SCORE ${entry.score} · ${entry.narrativeSource === "OPENAI" ? "TEXTO IA" : "TEXTO LOCAL"}</span></div>
+          <div class="speaker-line"><strong>${this.escape(character.name.toUpperCase())}</strong><span>${entry.type} · SCORE ${entry.score} · ${entry.narrativeSource !== "LOCAL_FALLBACK" ? "TEXTO IA" : "TEXTO LOCAL"}</span></div>
           ${this.expressionMarkup(entry.dialogue, expressionType)}
           <p class="action-caption">AÇÃO · ${this.escape(entry.chosenActionLabel)}</p>
         </div>
@@ -147,7 +147,7 @@
       article.innerHTML = `
         <div class="reaction-speaker">
           <strong>${this.escape(character.name.toUpperCase())}</strong>
-          <span>${isThought ? "PENSAMENTO EM RESPOSTA" : "RESPOSTA A " + (source ? source.name.toUpperCase() : "INTERAÇÃO")} · ${entry.narrativeSource === "OPENAI" ? "IA" : "LOCAL"}</span>
+          <span>${isThought ? "PENSAMENTO EM RESPOSTA" : "RESPOSTA A " + (source ? source.name.toUpperCase() : "INTERAÇÃO")} · ${entry.narrativeSource !== "LOCAL_FALLBACK" ? "IA" : "LOCAL"}</span>
         </div>
         <p class="reaction-copy">${isThought ? "“" : "“"}${this.escape(entry.text)}”</p>
       `;

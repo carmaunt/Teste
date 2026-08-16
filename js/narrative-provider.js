@@ -18,6 +18,7 @@
       super();
       this.endpoint = endpoint || "/api/narrate";
       this.model = null;
+      this.provider = null;
     }
 
     async health() {
@@ -25,10 +26,15 @@
       if (!response.ok) throw new Error("Servidor narrativo indisponível.");
       const status = await response.json();
       this.model = status.model || null;
+      this.provider = status.provider || "OLLAMA";
+      const available = Boolean(status.aiConfigured);
+      const mode = status.mode === "cloud" ? "Cloud" : "local";
       return {
-        available: Boolean(status.aiConfigured),
-        source: status.aiConfigured ? "OPENAI" : "LOCAL_FALLBACK",
-        label: status.aiConfigured ? `IA · ${status.model}` : "IA sem chave"
+        available,
+        source: available ? "OLLAMA" : "LOCAL_FALLBACK",
+        label: available
+          ? `Ollama ${mode} · ${status.model}`
+          : status.error || "Ollama indisponível"
       };
     }
 
@@ -90,13 +96,16 @@
 
       const action = result.entries.find((entry) => entry.kind === "ACTION");
       const reaction = result.entries.find((entry) => entry.kind === "REACTION");
+      const provider = payload.provider || this.provider || "OLLAMA";
       action.dialogue = payload.actionText.trim();
-      action.narrativeSource = "OPENAI";
+      action.narrativeSource = "OLLAMA";
+      action.narrativeProvider = provider;
       action.narrativeModel = payload.model || this.model;
       if (reaction) {
         if (!payload.reactionText || typeof payload.reactionText !== "string") throw new Error("A IA não gerou a resposta obrigatória.");
         reaction.text = payload.reactionText.trim();
-        reaction.narrativeSource = "OPENAI";
+        reaction.narrativeSource = "OLLAMA";
+        reaction.narrativeProvider = provider;
         reaction.narrativeModel = payload.model || this.model;
       }
       return result;
